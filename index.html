@@ -32,18 +32,10 @@
       font-family: "Poppins", sans-serif;
     }
     /* ===== Page layout =====
-       The navbar sits at the top and ONLY the area under it scrolls,
-       so the page text can never move behind the navbar. */
-    html, body { height: 100%; overflow: hidden; }
-    body { display: flex; flex-direction: column; height: 100dvh; }
-    .page-scroll {
-      flex: 1;
-      overflow-y: auto;
-      overflow-x: clip;                 /* no sideways scrolling */
-      -webkit-overflow-scrolling: touch;
-      scroll-behavior: smooth;
-    }
-    html { background: #0b0d1f; }
+       Normal navbar at the top of the page: it scrolls away with the page,
+       so nothing ever passes behind it. */
+    html, body { overflow-x: clip; max-width: 100%; }   /* no sideways scrolling */
+    html { scroll-behavior: smooth; }    html { background: #0b0d1f; }
     section { padding: 64px 0; }
     .bg-alt { background: var(--bg-alt); }
     .text-soft { color: var(--text-muted); }
@@ -51,7 +43,7 @@
 
     /* Navbar */
     .navbar {
-      position: relative; z-index: 1030; flex-shrink: 0;
+      position: relative; z-index: 1030;   /* normal navbar: scrolls away with the page */
       /* On iPhones, extend the navbar under the browser/status bar */
       padding-top: calc(1rem + env(safe-area-inset-top)) !important;
       background: #0b0d1f;   /* solid color: nothing shows through the navbar */
@@ -206,8 +198,6 @@
     </div>
   </nav>
 
-  <!-- Everything below the navbar scrolls inside this box -->
-  <div class="page-scroll" id="pageScroll">
 
   <!-- ===== Hero ===== -->
   <header id="home" class="hero">
@@ -471,8 +461,6 @@
     </div>
   </footer>
 
-  </div><!-- /page-scroll -->
-
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script>
     // Close the mobile menu after clicking a link
@@ -481,16 +469,6 @@
         const menu = bootstrap.Collapse.getInstance("#mainNav");
         if (menu) menu.hide();
       });
-    });
-    // Highlight the section you're looking at in the navbar
-    const scroller = document.getElementById("pageScroll");
-    const links = document.querySelectorAll("#mainNav .nav-link");
-    scroller.addEventListener("scroll", () => {
-      let current = "home";
-      document.querySelectorAll("header[id], section[id]").forEach((sec) => {
-        if (sec.offsetTop - 120 <= scroller.scrollTop) current = sec.id;
-      });
-      links.forEach((a) => a.classList.toggle("active", a.getAttribute("href") === "#" + current));
     });
   </script>
 </body>
