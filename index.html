@@ -2,7 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <!-- Colors the phone's browser bar the same dark color as the site -->
+  <meta name="theme-color" content="#0b0d1f">
   <title>Mariam Nassrallah | Developer Portfolio</title>
 
   <!-- Bootstrap 5 -->
@@ -24,14 +26,15 @@
       --primary-2: #5b7bff;
       --text-muted: #9aa0c3;
     }
-    html, body { overflow-x: clip; max-width: 100%; }
     body {
       background: var(--bg);
       color: #fff;
       font-family: "Poppins", sans-serif;
     }
-    html { scroll-behavior: smooth; }
-    section, header.hero { scroll-margin-top: 80px; }
+    /* No sideways scrolling. "clip" (not "hidden") so the fixed navbar
+       stays at the top on iPhone Safari */
+    html, body { overflow-x: clip; max-width: 100%; }
+    html { scroll-behavior: smooth; background: #0b0d1f; }
     section { padding: 64px 0; }
     .bg-alt { background: var(--bg-alt); }
     .text-soft { color: var(--text-muted); }
@@ -40,10 +43,13 @@
     /* Navbar */
     .navbar {
       position: fixed; top: 0; left: 0; right: 0; z-index: 1030;
+      /* On iPhones, extend the navbar under the browser/status bar */
+      padding-top: calc(1rem + env(safe-area-inset-top)) !important;
       background: rgba(11, 13, 31, 0.95);
-      -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
       border-bottom: 1px solid var(--border);
     }
+    /* Mobile menu: scroll inside it if it's taller than the screen */
     .navbar-collapse { max-height: calc(100vh - 80px); overflow-y: auto; }
     .navbar .nav-link { color: #cfd3f1; margin: 0 8px; position: relative; }
     .navbar .nav-link:hover, .navbar .nav-link.active { color: #fff; }
@@ -116,9 +122,28 @@
     .project-card {
       background: var(--card); border: 1px solid var(--border);
       border-radius: 12px; overflow: hidden; height: 100%;
+      transition: transform 0.3s, border-color 0.3s;
     }
-    .project-num { font-size: 0.85rem; font-weight: 600; }
+    .project-card:hover { transform: translateY(-8px); border-color: var(--primary); }
+    .project-thumb {
+      height: 170px; display: flex; align-items: center; justify-content: center;
+      font-size: 3.5rem; position: relative;
+    }
+    .project-num { position: absolute; top: 10px; left: 14px; font-size: 0.85rem; font-weight: 600; }
+    .project-card a { color: var(--primary); text-decoration: none; font-size: 0.85rem; }
     .badge-c { background: rgba(123, 92, 255, 0.15); color: #b9a8ff; font-weight: 400; }
+
+    /* Contact */
+    .info-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 30px; height: 100%; }
+    .social a {
+      width: 42px; height: 42px; display: inline-flex; align-items: center; justify-content: center;
+      border-radius: 50%; background: var(--card); border: 1px solid var(--border);
+      color: #fff; margin-right: 8px; font-size: 1.1rem; transition: 0.3s;
+    }
+    .social a:hover { background: var(--primary); border-color: var(--primary); }
+    .form-control { background: var(--bg); border-color: var(--border); color: #fff; }
+    .form-control:focus { background: var(--bg); color: #fff; border-color: var(--primary); box-shadow: none; }
+    .form-control::placeholder { color: #6b7199; }
 
     /* ClassRide showcase */
     .feature-list li { display: flex; gap: 10px; margin-bottom: 10px; color: #cfd3f1; }
@@ -139,18 +164,7 @@
     @media (min-width: 992px) {
       .phone-gallery { grid-template-columns: repeat(2, 1fr); }
     }
-
-    /* Contact */
-    .info-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 30px; height: 100%; }
-    .social a {
-      width: 42px; height: 42px; display: inline-flex; align-items: center; justify-content: center;
-      border-radius: 50%; background: var(--card); border: 1px solid var(--border);
-      color: #fff; margin-right: 8px; font-size: 1.1rem; transition: 0.3s;
-    }
-    .social a:hover { background: var(--primary); border-color: var(--primary); }
-    .form-control { background: var(--bg); border-color: var(--border); color: #fff; }
-    .form-control:focus { background: var(--bg); color: #fff; border-color: var(--primary); box-shadow: none; }
-    .form-control::placeholder { color: #6b7199; }
+    .project-card:hover { transform: none; }
 
     footer { border-top: 1px solid var(--border); }
 
@@ -213,7 +227,7 @@
 
         <div class="col-lg-5">
           <div class="hero-visual">
-            <!-- Replace with your photo: <img src="images/me.jpg" class="rounded-circle w-100"> -->
+            <!-- Replace with your photo: <img src="me.jpg" class="rounded-circle w-100"> -->
             <div class="hero-circle">MN</div>
             <div class="code-card">
               <div class="d-flex justify-content-between mb-2 text-soft">
@@ -344,7 +358,7 @@
       <div class="project-card p-4 p-lg-5">
         <div class="row g-4 g-lg-5 align-items-center">
           <div class="col-lg-5">
-            <span class="project-num text-primary-c">01 / Featured</span>
+            <span class="project-num position-static text-primary-c">01 / Featured</span>
             <h3 class="fw-semibold mt-2"><i class="bi bi-bus-front text-warning me-2"></i>ClassRide</h3>
             <p class="text-soft">
               A smart transportation management platform that simplifies university bus transportation
@@ -416,7 +430,7 @@
               <a href="#"><i class="bi bi-linkedin"></i></a>
               <a href="#"><i class="bi bi-instagram"></i></a>
             </div>
-            <p class="mt-4 mb-1"><i class="bi bi-envelope text-primary-c me-2"></i> mariamnasrlh9@gmail.com</p>
+            <p class="mt-4 mb-1"><i class="bi bi-envelope text-primary-c me-2"></i> your.email@example.com</p>
             <p class="mb-0"><i class="bi bi-geo-alt text-primary-c me-2"></i> Lebanon</p>
           </div>
         </div>
