@@ -31,10 +31,19 @@
       color: #fff;
       font-family: "Poppins", sans-serif;
     }
-    /* No sideways scrolling. "clip" (not "hidden") so the fixed navbar
-       stays at the top on iPhone Safari */
-    html, body { overflow-x: clip; max-width: 100%; }
-    html { scroll-behavior: smooth; background: #0b0d1f; }
+    /* ===== Page layout =====
+       The navbar sits at the top and ONLY the area under it scrolls,
+       so the page text can never move behind the navbar. */
+    html, body { height: 100%; overflow: hidden; }
+    body { display: flex; flex-direction: column; height: 100dvh; }
+    .page-scroll {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: clip;                 /* no sideways scrolling */
+      -webkit-overflow-scrolling: touch;
+      scroll-behavior: smooth;
+    }
+    html { background: #0b0d1f; }
     section { padding: 64px 0; }
     .bg-alt { background: var(--bg-alt); }
     .text-soft { color: var(--text-muted); }
@@ -42,14 +51,14 @@
 
     /* Navbar */
     .navbar {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 1030;
+      position: relative; z-index: 1030; flex-shrink: 0;
       /* On iPhones, extend the navbar under the browser/status bar */
       padding-top: calc(1rem + env(safe-area-inset-top)) !important;
       background: #0b0d1f;   /* solid color: nothing shows through the navbar */
       border-bottom: 1px solid var(--border);
     }
     /* Mobile menu: scroll inside it if it's taller than the screen */
-    .navbar-collapse { max-height: calc(100vh - 80px); overflow-y: auto; }
+    .navbar-collapse { max-height: 70vh; overflow-y: auto; }
     .navbar .nav-link { color: #cfd3f1; margin: 0 8px; position: relative; }
     .navbar .nav-link:hover, .navbar .nav-link.active { color: #fff; }
     .navbar .nav-link.active::after {
@@ -81,7 +90,7 @@
     }
 
     /* Hero */
-    .hero { padding-top: 120px; padding-bottom: 56px; }
+    .hero { padding-top: 56px; padding-bottom: 56px; }
     .hero h1 { font-weight: 700; font-size: clamp(2.3rem, 5vw, 3.6rem); }
     .hero h1 span { color: var(--primary); }
     .tech-icons i { font-size: 2.2rem; margin-right: 18px; }
@@ -170,7 +179,7 @@
     @media (max-width: 991px) {
       .code-card { right: 0; font-size: 0.7rem; }
       section { padding: 48px 0; }
-      .hero { padding-top: 100px; padding-bottom: 40px; }
+      .hero { padding-top: 40px; padding-bottom: 40px; }
       .hero-visual { max-width: 300px; }
     }
   </style>
@@ -178,7 +187,7 @@
 <body>
 
   <!-- ===== Navbar ===== -->
-  <nav class="navbar navbar-expand-lg navbar-dark fixed-top py-3">
+  <nav class="navbar navbar-expand-lg navbar-dark py-3">
     <div class="container">
       <a class="navbar-brand fw-semibold" href="#home"><span class="brand-icon">&lt;/&gt;</span> Mariam.dev</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
@@ -196,6 +205,9 @@
       </div>
     </div>
   </nav>
+
+  <!-- Everything below the navbar scrolls inside this box -->
+  <div class="page-scroll" id="pageScroll">
 
   <!-- ===== Hero ===== -->
   <header id="home" class="hero">
@@ -459,6 +471,27 @@
     </div>
   </footer>
 
+  </div><!-- /page-scroll -->
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Close the mobile menu after clicking a link
+    document.querySelectorAll("#mainNav .nav-link, .navbar .btn").forEach((link) => {
+      link.addEventListener("click", () => {
+        const menu = bootstrap.Collapse.getInstance("#mainNav");
+        if (menu) menu.hide();
+      });
+    });
+    // Highlight the section you're looking at in the navbar
+    const scroller = document.getElementById("pageScroll");
+    const links = document.querySelectorAll("#mainNav .nav-link");
+    scroller.addEventListener("scroll", () => {
+      let current = "home";
+      document.querySelectorAll("header[id], section[id]").forEach((sec) => {
+        if (sec.offsetTop - 120 <= scroller.scrollTop) current = sec.id;
+      });
+      links.forEach((a) => a.classList.toggle("active", a.getAttribute("href") === "#" + current));
+    });
+  </script>
 </body>
 </html>
